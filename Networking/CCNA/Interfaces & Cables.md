@@ -10,8 +10,27 @@ A collection of network protocols & standards. Ethernet standards are defined in
 
 ![Alt Text](./assets/Ethernet%20stands%20copper.png)
 
-- `Base-T`_Base_ for Baseband signaling, _T_ for Twisted pair
+- `Base-T` _Base_ for Baseband signaling, _T_ for Twisted pair
 
 ## Cooper UTP Cables
 
 - `UTP` _U_ Unshilded, _T_ Twisted (protects against EMI - Electromagnetic Interference -), _P_ pair.
+- There is 8 ping in UTP cables (8 wires).
+- _10 Base-T/100 Base-T_ use 2 pairs (4 wires).
+- _1000 Base-T/10G Base-T_ use 4 pairs (8 wires).
+
+  ![Alt Text](./assets/RJ-45.png)
+
+### UTP Cables (10 Base-T/100 Base-T)
+
+#### Straight through Cable
+
+In UTP copper cables, pins 1 and 2 from a client, router, or firewall connect to pins 1 and 2 on a switch, and pins 3 and 6 connect to pins 3 and 6. The client side uses pins 1 and 2 to send data, and the switch uses them to receive — and vice versa for pins 3 and 6 — which gives a full-duplex connection.
+
+![Alt Text](./assets/Straight_through%20cable.png)
+
+When we connect a client to a Sw or R to a Sw, Straight through Cable works fine, But in networks we don't always connect pc to Sw/Sw to R, what if we want to connect a R to R/Sw to Sw/R to client?
+
+#### Crossover Cable
+
+![Alt Text](./assets/Crossover%20Cable.png)
