@@ -1,6 +1,6 @@
 # 🛡️ Cybersecurity Journey — From Zero to Pentester
 
-Hi! I'm documenting my self-taught cybersecurity and pentesting learning journey.  
+Hi! I'm documenting my cybersecurity and pentesting learning journey.  
 This repo contains notes, labs, tool usage, writeups, and automation scripts.
 
 ## 📚 Table of content:
