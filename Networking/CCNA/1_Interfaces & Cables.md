@@ -37,8 +37,64 @@ The solution is to use a different type of cables, called **crossover cable** wh
 
 ![Alt Text](./assets/Crossover%20Cable.png)
 
-#### different devices and the pins they use to transmit and receive data
+#### Different devices and the pins they use to transmit and receive data
 
 ![Alt Text](./assets/chart%20of%20pins.png)
 
 `Auto MDI-X` Is a feature in network devices that automatically switches the pins used for sending (Tx) and receiving (Rx) data inside the device, so it doesn’t matter what type of Ethernet cable you use — it will just work.
+
+### UTP Cables (1000 Base-T/10G Base-T)
+
+- In 1000/10G Base-t Cables all the 8 wires are used.
+- In addition of using all the 4 pairs of wires, each pair is bidirectional. Each pair is not dedicated specifically to transmit or receive data(result: much faster).
+
+  ![Alt Text](./assets/10G%20Base-T%20.png)
+
+#### ⚠️ Note
+
+UTP leak signal outside cable, which can be copied (security risk!).
+
+## Fiber-Optic Connections
+
+It uses **SFP transceivers** (Small Form-Factor Pluggable).
+
+![Alt Text](./assets/SFP.png)
+
+We connect a **fiber optic cable** to it.
+
+![Alt Text](./assets/Fiber-Optic%20Cable.png)
+
+We can notice that there is two connectors, one for transmitting, the other to receive.
+
+### Cable Structure
+
+![Alt Text](./assets/Fiber%20Cable%20Structure.png)
+
+- 1 is The fiberglass core.
+- 2 is a cladding that reflects light.
+- 3 a protective buffer.
+- 4 is the outer jacket of the cable.
+
+### Types
+
+#### Multimode Fiber
+
+![Alt Text](./assets/Multimode%20Fiber.png)
+
+- Core diameter is wider than Single-mode fiber.
+- Multiple angles (Modes).
+- Longer cable than UTP, but shorter than Single-mode fiber.
+  -Cheaper than Single-mode fiber (LED-based SFP).
+
+#### Single-mode Fiber
+
+![Alt Text](./assets/Single-mode%20Fiber.png)
+
+- Core diameter is narrower than Multimode fiber.
+- Single angle.
+- Longer cable than UTP/Multimode cables
+- Expensive (Laser-based SFP)
+
+### Fiber Optic Cables Standards
+
+![Alt Text](./assets/Fiber%20Standards.png)
