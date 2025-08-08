@@ -25,7 +25,7 @@ A collection of network protocols & standards. Ethernet standards are defined in
 
 #### Straight through Cable
 
-In UTP copper cables, pins 1 and 2 from a client, router, or firewall connect to pins 1 and 2 on a switch, and pins 3 and 6 connect to pins 3 and 6. The client side uses pins 1 and 2 to send data, and the switch uses them to receive — and vice versa for pins 3 and 6 — which gives a full-duplex connection.
+In Straight through UTP copper cables, pins 1 and 2 from a client, router, or firewall connect to pins 1 and 2 on a switch, and pins 3 and 6 connect to pins 3 and 6. The client side uses pins 1 and 2 to send data, and the switch uses them to receive — and vice versa for pins 3 and 6 — which gives a full-duplex connection.
 
 ![Alt Text](./assets/Straight_through%20cable.png)
 
@@ -33,4 +33,12 @@ When we connect a client to a Sw or R to a Sw, Straight through Cable works fine
 
 #### Crossover Cable
 
+The solution is to use a different type of cables, called **crossover cable** where a pin on one end of the cable does not connect straight to the same pin on the other end, the pairs are reversed on each end.
+
 ![Alt Text](./assets/Crossover%20Cable.png)
+
+#### different devices and the pins they use to transmit and receive data
+
+![Alt Text](./assets/chart%20of%20pins.png)
+
+`Auto MDI-X` Is a feature in network devices that automatically switches the pins used for sending (Tx) and receiving (Rx) data inside the device, so it doesn’t matter what type of Ethernet cable you use — it will just work.
