@@ -8,7 +8,7 @@ A collection of network protocols & standards. Ethernet standards are defined in
 
 ### Ethernet Standards (copper cables)
 
-![Alt Text](./assets/Ethernet%20stands%20copper.png)
+![Alt Text](./assets/interfaces%20&%20cables/Ethernet%20stands%20copper.png)
 
 - `Base-T` _Base_ for Baseband signaling, _T_ for Twisted pair
 
@@ -19,7 +19,7 @@ A collection of network protocols & standards. Ethernet standards are defined in
 - _10 Base-T/100 Base-T_ use 2 pairs (4 wires).
 - _1000 Base-T/10G Base-T_ use 4 pairs (8 wires).
 
-  ![Alt Text](./assets/RJ-45.png)
+  ![Alt Text](./assets/interfaces%20&%20cables/RJ-45.png)
 
 ### UTP Cables (10 Base-T/100 Base-T)
 
@@ -27,7 +27,7 @@ A collection of network protocols & standards. Ethernet standards are defined in
 
 In Straight through UTP copper cables, pins 1 and 2 from a client, router, or firewall connect to pins 1 and 2 on a switch, and pins 3 and 6 connect to pins 3 and 6. The client side uses pins 1 and 2 to send data, and the switch uses them to receive — and vice versa for pins 3 and 6 — which gives a full-duplex connection.
 
-![Alt Text](./assets/Straight_through%20cable.png)
+![Alt Text](./assets/interfaces%20&%20cables/Straight_through%20cable.png)
 
 When we connect a client to a Sw or R to a Sw, Straight through Cable works fine, But in networks we don't always connect pc to Sw/Sw to R, what if we want to connect a R to R/Sw to Sw/R to client?
 
@@ -35,11 +35,11 @@ When we connect a client to a Sw or R to a Sw, Straight through Cable works fine
 
 The solution is to use a different type of cables, called **crossover cable** where a pin on one end of the cable does not connect straight to the same pin on the other end, the pairs are reversed on each end.
 
-![Alt Text](./assets/Crossover%20Cable.png)
+![Alt Text](./assets/interfaces%20&%20cables/Crossover%20Cable.png)
 
 #### Different devices and the pins they use to transmit and receive data
 
-![Alt Text](./assets/chart%20of%20pins.png)
+![Alt Text](./assets/interfaces%20&%20cables/chart%20of%20pins.png)
 
 `Auto MDI-X` Is a feature in network devices that automatically switches the pins used for sending (Tx) and receiving (Rx) data inside the device, so it doesn’t matter what type of Ethernet cable you use — it will just work.
 
@@ -48,7 +48,7 @@ The solution is to use a different type of cables, called **crossover cable** wh
 - In 1000/10G Base-t Cables all the 8 wires are used.
 - In addition of using all the 4 pairs of wires, each pair is bidirectional. Each pair is not dedicated specifically to transmit or receive data(result: much faster).
 
-  ![Alt Text](./assets/10G%20Base-T%20.png)
+  ![Alt Text](./assets/interfaces%20&%20cables/10G%20Base-T%20.png)
 
 #### ⚠️ Note
 
@@ -58,17 +58,17 @@ UTP leak signal outside cable, which can be copied (security risk!).
 
 It uses **SFP transceivers** (Small Form-Factor Pluggable).
 
-![Alt Text](./assets/SFP.png)
+![Alt Text](./assets/interfaces%20&%20cables/SFP.png)
 
 We connect a **fiber optic cable** to it.
 
-![Alt Text](./assets/Fiber-Optic%20Cable.png)
+![Alt Text](./assets/interfaces%20&%20cables/Fiber-Optic%20Cable.png)
 
 We can notice that there is two connectors, one for transmitting, the other to receive.
 
 ### Cable Structure
 
-![Alt Text](./assets/Fiber%20Cable%20Structure.png)
+![Alt Text](./assets/interfaces%20&%20cables/Fiber%20Cable%20Structure.png)
 
 - 1 is The fiberglass core.
 - 2 is a cladding that reflects light.
@@ -79,7 +79,7 @@ We can notice that there is two connectors, one for transmitting, the other to r
 
 #### Multimode Fiber
 
-![Alt Text](./assets/Multimode%20Fiber.png)
+![Alt Text](./assets/interfaces%20&%20cables/Multimode%20Fiber.png)
 
 - Core diameter is wider than Single-mode fiber.
 - Multiple angles (Modes).
@@ -88,7 +88,7 @@ We can notice that there is two connectors, one for transmitting, the other to r
 
 #### Single-mode Fiber
 
-![Alt Text](./assets/Single-mode%20Fiber.png)
+![Alt Text](./assets/interfaces%20&%20cables/Single-mode%20Fiber.png)
 
 - Core diameter is narrower than Multimode fiber.
 - Single angle.
@@ -97,4 +97,4 @@ We can notice that there is two connectors, one for transmitting, the other to r
 
 ### Fiber Optic Cables Standards
 
-![Alt Text](./assets/Fiber%20Standards.png)
+![Alt Text](./assets/interfaces%20&%20cables/Fiber%20Standards.png)
