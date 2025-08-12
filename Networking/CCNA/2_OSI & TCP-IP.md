@@ -49,3 +49,10 @@ Networking models categorize and provide a structure for networking protocols an
 - Data in this layer is called **`Frame`**
 
 ### 1. Physical Layer
+
+- Defines physical characteristics of the medium used to transfer data (voltage, distance, cables)
+- Bits converted into electrical/radio signals
+
+### Encapsulation/De-encapsulation
+
+![Alt Text](./assets/OSI%20&%20TCP-IP/OSI.png)
