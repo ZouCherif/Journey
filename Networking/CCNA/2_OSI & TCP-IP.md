@@ -56,3 +56,7 @@ Networking models categorize and provide a structure for networking protocols an
 ### Encapsulation/De-encapsulation
 
 ![Alt Text](./assets/OSI%20&%20TCP-IP/OSI.png)
+
+## TCP/IP
+
+![alt text](./assets/OSI%20&%20TCP-IP/TCPIP.png)
