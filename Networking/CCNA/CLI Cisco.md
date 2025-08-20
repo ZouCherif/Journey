@@ -30,3 +30,49 @@ We use the `?` cmd to view the available cmds
 - `Router(config)# enable password CCNA` "CCNA" is the password
 
 ## Running/Startup Config
+
+- There is two seperate configuration files kept on the device
+
+  - `Running config` the current active configuration file on the device. as we enter the cmds in the cli, we edit the active configuration
+
+  - `Statup config` the config file that will be loaded upon restart of the device
+
+- We use the cmd `show` to view the config files
+  - `show running-config` and `show startup-config`
+
+### Saving The Configuration
+
+- There is three ways to save the configuration
+  - `Router# write`
+  - `Router# write memory`
+  - `Router# copy running-config startup-config`
+
+## Service Password Encryption
+
+- `Router(config)# service password-encryption`
+  - encryption type 7 (not very secure)
+- Now if we check the running config cmd we will notice that the password is encrypted
+
+## Other method to enable pwd encryption
+
+- `Router(config)# enable secret CISCO`
+- Encryption type 5 (MD5 encryption)
+
+### ⚠️ Note
+
+- If both the enable secret and enable password are configured, the **enable password will be ignored, only the enable secret willbe valid**
+- `Router(config)# do sh run` Or do show running-config, the **do** cmd allow us to execute privileged cmds in other conf levels
+
+## Canceling Cmds
+
+- To cancel a cmd we use `no` cmd
+  - `Router(config)# no service password-encryption`
+
+### ⚠️ Note
+
+- Here service password-encryption will not be used in future cmds, but current pwd will still encrypted and it does not affect enable secret
+
+## Changing Hostname
+
+- `Router(config)# hostname R1`
+  - `R1(config)#`
