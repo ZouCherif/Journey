@@ -19,6 +19,14 @@ Now let’s take a look at the different parts that make up a network **frame**.
   - 1 byte (8 bits)
   - 10101011 (like the preamble but the last bit is 1)
   - Marks the end of the preamble, and the beginning of the rest of the frame
-- `Destination`
-- `Source`
-- `Type`
+- `Destination` and `Source`
+  - Mac address
+  - 6 bytes (48 bits)
+- `Type` or `Length`
+  - 2 bytes (16 bits)
+  - A value of 1500 or less in this field indicates the LENGTH of the Packet (in bytes)
+  - A value of 1536 or greater in this field indicates the TYPE of the encapsulated packet (usually IPv4 or IPv6), and the length is determined via other methods
+- `FCS`
+  - 4 bytes (36 bits)
+  - Detects corrupted data by running a 'CRC' algorithm over
+    the received data
