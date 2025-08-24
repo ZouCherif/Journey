@@ -30,3 +30,65 @@ Now let’s take a look at the different parts that make up a network **frame**.
   - 4 bytes (36 bits)
   - Detects corrupted data by running a 'CRC' algorithm over
     the received data
+
+## How Switches Handle Frames in a LAN
+
+### Step 1: PC1 sends a frame to PC3
+
+![alt text](./assets/switching/Mac%20adr%20Learning%201.png)
+
+- SW1 receives the frame on interface F0/1
+
+  - SW1 checks the **source** MAC AAAA.AA00.0001 and learns (MAC AAAA.AA00.0001 is connected to F0/1)
+  - SW1 adds this info to its MAC table.
+
+  ![alt text](./assets/switching/Mac%20adr%20Learning%202.png)
+
+  - This is called `Dynamically Learned Mac Address`
+
+- SW1 then checks its MAC table for the **destination** MAC AAAA.AA00.0003
+
+  - It does not know this MAC yet.
+  - This is an `unknown unicast frame`.
+  - SW1 **floods** the frame out all other interfaces (F0/2 and F0/3).
+
+  ![Alt Text](./assets/switching/Mac%20adr%20Learning%203.png)
+
+  - PC2 drops the frame
+
+- SW2 receives the frame on interface F0/3
+
+  - SW2 checks the **source** MAC AAAA.AA00.0001 and learns (MAC AAAA.AA00.0001 is on F0/3)
+  - SW2 adds this info to its MAC table.
+
+  ![Alt Text](./assets/switching/Mac%20adr%20Learning%204.png)
+
+- SW2 checks for **destination** MAC AAAA.AA00.0003
+
+  - Unknown, not in the table (`unknown unicast frame`)
+  - SW2 **floods** the frame to F0/1 and F0/2.
+  - PC4 drops the frame
+  - PC3 sees its own MAC as the destination and accepts the frame.
+
+  ![Alt Text](./assets/switching/Mac%20adr%20Learning%205.png)
+
+### Step 2: PC3 sends a frame to PC1 (Reply)
+
+![Alt Text](./assets/switching/Mac%20adr%20Learning%206.png)
+
+- SW2 receives the frame on interface F0/1
+
+  - SW2 learns that AAAA.AA00.0003 is on F0/1, updates its MAC table.
+  - SW2 checks for AAAA.AA00.0001 in its MAC table – it knows it’s on F0/3
+  - SW2 forwards the frame only to interface F0/3 (`known unicast`)
+
+  ![Alt Text](./assets/switching/Mac%20adr%20Learning%207.png)
+
+- SW1 receives the frame on interface F0/3
+
+  - SW1 learns that AAAA.AA00.0003 is on F0/3, updates its MAC table.
+  - SW1 checks for AAAA.AA00.0001 in its MAC table – it knows it’s on F0/1
+  - SW1 forwards the frame only to interface F0/1 (known unicast)
+  - PC1 receives the frame and processes it.
+
+  ![Alt Text](./assets/switching/Mac%20adr%20Learning%208.png)
