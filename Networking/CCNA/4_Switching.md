@@ -141,3 +141,9 @@ Now let’s take a look at the different parts that make up a network **frame**.
 
 - Type static = default entry
 - Type dynamic = learned via ARP
+
+## Ping
+
+- A network utility that is used to test reachability
+- Measures round-trip time
+- Uses two messages: `ICMP Echo Request` and `ICMP Echo Reply`

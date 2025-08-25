@@ -76,3 +76,14 @@ We use the `?` cmd to view the available cmds
 
 - `Router(config)# hostname R1`
   - `R1(config)#`
+
+## ARP Table
+
+- `PC1# show arp`
+
+## MAC Address Table
+
+- `SW1# show mac address-table`
+- To clear the MAC table use the cmd: `SW1# clear mac Address-table dynamic`
+- To delete only one MAC adr: `SW1# clear mac address-table dynamic address <mac-addresss>`
+- To delete all MAC addresses for one interface: `SW1# clear mac address-table interface <interface-id(ex: Gi0/0)>`
