@@ -11,3 +11,7 @@
 - `Loopback Addresses` 127.0.0.0 - 127.255.255.255
 
 ![Alt Text](./assets/IPv4/classes%20prefix.png)
+
+## Calculating Max Hosts Per Network
+
+![Alt Text](./assets/IPv4/max%20hosts.png)

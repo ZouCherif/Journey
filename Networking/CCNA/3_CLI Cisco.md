@@ -87,3 +87,26 @@ We use the `?` cmd to view the available cmds
 - To clear the MAC table use the cmd: `SW1# clear mac Address-table dynamic`
 - To delete only one MAC adr: `SW1# clear mac address-table dynamic address <mac-addresss>`
 - To delete all MAC addresses for one interface: `SW1# clear mac address-table interface <interface-id(ex: Gi0/0)>`
+
+## IP Adresses Of A Router Interfaces
+
+- `R1# show ip interface brief`
+
+![Alt Text](./assets/CLI/ip%20interfaces%20brief.png)
+
+- **administratively down**: Interface has been disabled with the **`shutdown`** command (This is the default Status of Cisco router interfaces)
+- The **Status** column is the Layer 1 status (is the interface shutdown, is the cable attached ...etc)
+- The **Protocol** column refers to the Layer 2 status (is Ethernet function properly)
+
+### Configuring IP Addresses
+
+- `R1# conf t`
+  - `R1(config)# interface gigabitethernet 0/0` or `in g0/0`
+  - `R1(config-if)# ip address 10.255.255.254 255.0.0.0`
+  - `R1(config-if)# no shutdown` to enable the interface
+
+## Some `Show` Cmds
+
+- `R1# show interfaces g0/0` it shows info about the interface
+- `R1# show interfaces description`
+  - `R1(config-if)# description <ex: ## to SW1 ##>` to set a description
