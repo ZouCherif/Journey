@@ -110,3 +110,5 @@ We use the `?` cmd to view the available cmds
 - `R1# show interfaces g0/0` it shows info about the interface
 - `R1# show interfaces description`
   - `R1(config-if)# description <ex: ## to SW1 ##>` to set a description
+
+## Switch interfaces (6_Switch interafaces.md)
