@@ -23,3 +23,16 @@ A module in Metasploit is a small part of the framework used to perform a task, 
 `Payload Modules` Payload modules are the code that runs on a target after a successful exploit. They allow you to do things like reverse shell, control the system remotely, or run custom commands on the target machine.  
 `Post modules` are used after you’ve already accessed a target. They help you gather information, maintain access, or perform tasks like dumping passwords, collecting system info, or cleaning up traces.  
 `Encoder modules` are used to modify payloads to make it more difficult to identify by security defenses, like antivirus or IDSs. They don’t change the payload behavior, they just change its form to make it harder to detect.
+
+### Msfconsole
+
+The main command-line interface for interacting with Metasploit. It allows you to search for, configure, and launch exploits.
+
+#### Basic Commands
+
+- `msfconsole` Launches the Metasploit framework in the command CLI.
+- `search <keyword>` Finds modules related to a specific target, service, or exploit (for example **_search smb_** lists all modules that work on SMB services.).
+- `use [module_path]` Loads the module you want to work with (ex: **_use exploit/windows/smb/ms08_067_netapi_**).
+- `show options` Lists the configurable parameters of the currently loaded module (like the target IP and PORT).
+- `set [option] [value]` Assigns a value to a module option (Example: **_set RHOSTS 192.168.1.10_** sets the target host).
+- `exploit` Executes the loaded module against the target.
