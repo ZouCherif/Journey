@@ -112,3 +112,7 @@ We use the `?` cmd to view the available cmds
   - `R1(config-if)# description <ex: ## to SW1 ##>` to set a description
 
 ## Switch interfaces (6_Switch interafaces.md)
+
+## Routing Table
+
+`R1# show ip route` to view the routing table (more info about this cmd in _8_Routing.md_)

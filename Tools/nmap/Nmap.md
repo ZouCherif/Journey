@@ -82,3 +82,28 @@
 - Gives a detailed log of packets journey sent and received.
 
 ## Port Scanning
+
+### Perform A Fast Scan
+
+- `nmap -F <target>`
+  - By default nmap scans the top 1000 ports but with the `-F` option nmap trims that list down to 100 in order to optimize scanning experience.
+
+### Scan Specific Ports
+
+- `nmap -p <Ports> <target>`
+  - Example `nmap 80 192.168.52.1`
+  - Or `nmap 80,139,50-100 192.168.52.1`
+- Using Port name also `nmap <Port names(service name)> <target>`
+  - Example `nmap http,msrpc,apex-mesh 192.168.52.1 `
+- `nmap -p "*" <target>` Scans all 65k ports
+- `nmap -sU -sT -p U:[port num for UDP] T:[port num for tcp] <Target>`
+  - Example `nmap -sU -sT -p U:53,T:25 192.168.52.1`
+  - this command is used to check both UDP and TCP services on specific ports of a target host. It helps you find out which of those services (like DNS on UDP 53 or SMTP on TCP 25) are open or responding.
+    This command runs a combined scan: -sU sends UDP probes and -sT performs a TCP connect scan.
+  - It targets UDP port 53 and TCP port 25 on the host 192.168.52.1, checking their states simultaneously.
+
+### Scan top Ports
+
+- `nmap --top-ports <number of ports> <target>`
+
+## foundational Scanning
