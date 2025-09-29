@@ -33,3 +33,5 @@ forward the packet.
 
 - **_Most specific_** matching route = the matching route with the longest prefix length.
   → This is different than switches, which look for an **exact** match in the MAC address table to forward frames.
+
+## Static Routing

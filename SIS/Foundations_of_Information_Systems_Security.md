@@ -26,4 +26,14 @@ An organization's information system contains a set of assets:
 
 The goal of security is to **_reduce risks_** to the information system, to **_limit their impact_** on the operations and business activities of organizations.
 
-Information-system security management is not about creating obstacles; it enhances service quality for users and ensures staff receive the protection they deserve.
+Information-system security management is not about creating obstacles, it enhances service quality for users and ensures staff receive the protection they deserve.
+
+#### Which departments within a company are impacted by IS security?
+
+Information-system security affects every major business area: finances, legal/regulatory compliance, organizational operations, and the company’s image and reputation.  
+A breach can create financial loss, legal penalties, internal disruption, and damage to public trust.
+
+#### Why are hackers interested in organizations' information systems or individuals computers?
+
+Hackers go after companies and people to make money, like stealing and selling data, demanding ransom, or using computers for their own services.  
+They also spy for businesses or governments and may threaten to leak or change information.
