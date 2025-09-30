@@ -116,3 +116,8 @@ We use the `?` cmd to view the available cmds
 ## Routing Table
 
 `R1# show ip route` to view the routing table (more info about this cmd in _8_Routing.md_)
+
+## Static Routes Configuration
+
+- `R1(config)# ip route <ip-address> <netmask> <next-hop>`
+  - Example: `R1(config)# ip route 192.168.4.0 255.255.255 192.168.13.3`
