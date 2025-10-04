@@ -25,13 +25,6 @@ it brings us straight to a login page `http://10.10.134.1/auth/login?to=/`
 
 ### What is the path that allow user enumeration?
 
-<!-- - Until now we don't have any credentials, i tried different random credentials, the server is always responding with the same response **Login failed**, this will not gonna help us to enumerate users since the response is the same for all inputs
-- Lets check the forgot password page
-  - When we enter a random username we get **User not found** message, except for the username `admin` i got **"Invalid address: (From): root@localhost"**, maybe this gonna help us later.
-- Lets check the diffrent requests using **_Burpsuite_**
-  ![Alt Text](./assets/login_req.png)
-  this is strange, there is a csrf token in the req body -->
-
 ### How many users can you identify when you reproduce the user enumeration attack?
 
 Since we know the name and the version of the CMS let check there is any exploit on metasploit related to this software
@@ -62,6 +55,8 @@ We Run the exploit, we will notice 4 users(admin, darkStar7471, skidy, ekoparty)
 <span style="color: green; font-weight: bold">Correct Answer: `4`</span>
 
 ### What is the path that allows you to change user account passwords?
+
+<span style="color: green; font-weight: bold">Correct Answer: `/auth/resetpassword`</span>
 
 ### Compromise the Content Management System (CMS). What is Skidy's email.
 
@@ -112,3 +107,21 @@ Since we don't have the permission to cat user.txt in meterpreter, we have to ac
 <span style="color: green; font-weight: bold">Correct Answer: `thm{c5fc72c48759318c78ec88a786d7c213da05f0ce}`</span>
 
 ### What is the CVE number for the vulnerability affecting the binary assigned to the system user? Answer format: CVE-0000-0000
+
+When we check sudo privileges, we notice a misconfiguration, `stux` can execute exiftoo with root privileges without require root password.
+
+![Alt Text](./assets/16.png)
+
+For more information check: https://ine.com/blog/exiftool-command-injection-cve-2021-22204-exploitation-and-prevention-strategies
+
+<span style="color: green; font-weight: bold">Correct Answer: `CVE-2021-22204`</span>
+
+### What is the utility used to create the PoC file?
+
+<span style="color: green; font-weight: bold">Correct Answer: `djvumake`</span>
+
+### Escalate your privileges. What is the flag in root.txt?
+
+We use exiftool to make a copy of `root.txt` file
+
+![Alt Text](./assets/17.png)
