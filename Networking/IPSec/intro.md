@@ -37,9 +37,9 @@ When we ask “At which OSI layer should we add security?”, the focus is on wh
   - Packets may be lost, duplicated, or replayed.
 - No ordering guarantee
   - Packets may arrive out of order, which can mess up data if not handled at higher layers.
-- Packets can be sniffed
+- Packets can be sniffed `(no privacy)`
   - Anyone with access to the network can capture and read IP packets.
-- IP addresses can be spoofed
+- IP addresses can be spoofed `(no authentication)`
   - Attackers can fake the source IP to impersonate someone else.
 
 #### Techniques to create a VPN (using IPSec)
@@ -52,3 +52,51 @@ When we ask “At which OSI layer should we add security?”, the focus is on wh
   - Encrypting and authenticating packets using IPSec to create a secure tunnel, preventing eavesdropping, tampering, and spoofing.
 
 ## IPSec overview
+
+### What is IPsec?
+
+`Internet Protocol Security` is a set of rules & tools that makes sure data traveling over the Internet is safe.
+
+### What does IPsec do?
+
+Before sending your data, IPsec can:
+
+- Encrypt it `(confidentiality)`→ so nobody can read it.
+- Add a signature (MAC) `(integrity + authentication)` → so receiver knows it wasn’t changed & Authenticate sender so you know it’s from the right source.
+- Add numbering `(to avoid replay attacks)`→ so old/repeated packets get rejected.
+
+> If the cryptographic algorithms are strong, and the keys are secure then the only possible attack is to stop the communications (DoS attack).
+
+> Also known as `S-VPN` (Secure VPN)
+
+### IPsec packet types (two main ones)
+
+- `AH` (Authentication Header)
+  - Protects against tampering and fake packets.
+  - Does not hide the data (no encryption).
+  - Rarely used today.
+- `ESP` (Encapsulating Security Payload)
+  - Protects against tampering and hides the data (encryption).
+  - This is what most VPNs use.
+
+### Two ways IPsec can work
+
+- `Transport Mode`
+  - Only protects the inside (data part) of your packet.
+  - Original addresses are still visible.
+  - Used when two computers directly talk securely.
+- `Tunnel Mode`
+  - Protects the whole original packet by wrapping it in a new one.
+  - Like putting your letter in a new envelope with a new address.
+  - Used for VPNs between offices, or user-to-office.
+
+### How do two sides agree on how to protect data?
+
+They need to agree on:
+
+- What algorithms to use (like “let’s use AES encryption”).
+- What keys to use for encryption.
+- How long to use them.
+
+This agreement is called a `Security Association (SA)`.
+To build it, they use a helper protocol called `IKE (Internet Key Exchange)`.
