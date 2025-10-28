@@ -99,3 +99,51 @@ Different ways a manager collects information from the network:
 - **Manual**
 - **Polling** – periodic querying of managed objects
 - **Notifications** – information sent by agents
+
+# SNMP
+
+SNMP works using three main ideas:
+
+1. `Information model (SMI)` Defines what kind of data can be managed and gives each piece a unique ID (OID).
+2. `SNMP protocol` Defines how they communicate: the manager sends requests, the agent sends responses or traps, using UDP.
+3. `Data encoding (ASN.1)` Defines how the data is written so all devices understand it the same way.
+
+## Reference Tree (OID tree)
+
+- **Object Identifiers (OIDs)** are unique numbers used to identify every managed object in SNMP.
+- These OIDs are organized in a **hierarchical** tree (like folders and subfolders).
+- The tree structure ensures **uniqueness** — no two objects share the same OID.
+- It’s also **flexible and scalable** — each organization or vendor can manage its own branch of the tree and add new objects without conflict.
+
+## What is a MIB (Management Information Base)?
+
+A MIB is a database inside a network device (router, switch, printer, etc.) that stores all the manageable information (like name, uptime, traffic, temperature…).  
+It’s used by the SNMP agent to answer questions from the manager.
+
+![Alt Text](./assets/MIB.png)
+
+### Structure
+
+- All MIB objects are organized in a hierarchical tree called the OID tree (Object Identifier tree).
+- Each object has a unique ID (OID) made of numbers separated by dots (e.g., 1.3.6.1.2.1.1.5.0).
+- The OID shows where the object lives in the tree — like a path or address.
+
+### Main branches
+
+Under 1.3.6.1 (internet), the two most important branches are:
+
+`mgmt` - 1.3.6.1.2 - Standard objects common to all devices (MIB-II)
+
+- Contains objects defined by IETF standards.
+- Present in all SNMP devices, regardless of brand.
+- Example objects:
+  - sysName (1.3.6.1.2.1.1.5.0)
+  - sysUpTime (1.3.6.1.2.1.1.3.0)
+
+`private` - 1.3.6.1.4 - Vendor-specific objects (defined by manufacturers)
+
+- Reserved for manufacturers who register their own branch under 1.3.6.1.4.1
+- Each company gets a unique enterprise number
+- They create custom MIBs for their specific features:
+  - Cisco CPU load: 1.3.6.1.4.1.9.2.1
+  - Cisco temperature: 1.3.6.1.4.1.9.2.2
