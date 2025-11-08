@@ -147,3 +147,62 @@ Under 1.3.6.1 (internet), the two most important branches are:
 - They create custom MIBs for their specific features:
   - Cisco CPU load: 1.3.6.1.4.1.9.2.1
   - Cisco temperature: 1.3.6.1.4.1.9.2.2
+
+# ASN.1 (Abstract Syntax Notation #1)
+
+**ASN.1 (Abstract Syntax Notation One)** is a standard language used to describe and encode data so that different systems can exchange information in a consistent way.
+
+The main building block in ASN.1 is a `module`, each module can:
+
+- Define its own data types and constants (like variables and structures).
+- Import types or constants from other modules.
+- Export its own types or constants so other modules can use them.
+
+### Defining a type
+
+    <type> ::= <definition>
+
+You are defining a new data type based on another one.
+
+Example:
+
+    mtu ::= INTEGER
+
+Here, you define a new type mtu that is an INTEGER.
+
+### Defining a constant
+
+    <constant> <type> ::= <value>
+
+Example:
+
+    maxMTU INTEGER ::= 1500
+
+### Integer with limits (constraints)
+
+    counter ::= INTEGER (0..4294967295)
+
+Defines a variable counter that can only take values between 0 and 4,294,967,295
+(typical for 32-bit counters in SNMP).
+
+### Integer with named values
+
+    Interface ::= INTEGER {
+      ethernet-csmacd(6),
+      softwareLoopback(24)
+    }
+
+- This line defines a new type called Interface.
+- It’s based on an INTEGER, but only certain integers have special names.
+
+Those are the possible values the `Interface` type can take.
+
+When you actually want to use it
+
+    myInterface Interface ::= ethernet-csmacd
+
+is the same as:
+
+    myInterface Interface ::= 6
+
+## Type Octet String
