@@ -205,4 +205,67 @@ is the same as:
 
     myInterface Interface ::= 6
 
-## Type Octet String
+## Type OCTET STRING
+
+A sequence of bytes (octets), it’s the ASN.1 way of representing text, addresses, or binary info.
+
+#### Example
+
+    deviceName OCTET STRING ::= "Router-Paris"
+
+>
+
+    macAddress OCTET STRING ::= '001122334455'H
+
+>
+
+    IpAddress ::= OCTET STRING (SIZE(4))
+    IpAddress ::= 'C0A80105'H
+
+This defines IpAddress as an OCTET STRING with exactly 4 bytes.
+
+## Type OBJECT IDENTIFIER
+
+    <name> OBJECT IDENTIFIER ::= { parent number }
+
+Example
+
+    mgmt OBJECT IDENTIFIER ::= { internet 2 }
+
+>
+
+    sysName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Device name"
+    ::= { system 5 }
+
+`system` = 1.3.6.1.2.1.1, `sysName` = 1.3.6.1.2.1.1.5
+
+## SEQUENCE (structured type)
+
+A SEQUENCE is an ordered list of fields, where each field has its own name and type.
+
+    IpRouteTableEntry ::= SEQUENCE {
+        ipRouteDest     IpAddress,
+        ipRouteNextHop  IpAddress
+    }
+
+## SEQUENCE OF (repeated structure)
+
+A list of multiple elements of the same type.
+
+    IpRouteTable ::= SEQUENCE OF IpRouteTableEntry
+
+## MACRO
+
+A MACRO is a mechanism that allows you to create new notation formats in ASN.1.  
+SNMP uses macros to define how MIB objects should be written.  
+The most important macro in SNMP is OBJECT-TYPE.
+
+    sysContact OBJECT-TYPE
+    SYNTAX      DisplayString
+    ACCESS      read-write
+    STATUS      mandatory
+    ::= { system 4 }
