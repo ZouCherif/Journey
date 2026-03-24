@@ -1,12 +1,12 @@
-# CTF Write-Up: [Challenge Name]
+# CTF Write-Up: Smol
 
 ## 1. Challenge Overview
 
-- **Name:** [Challenge Name]
-- **Category:** [Pwn / Web / Crypto / Reversing / Forensics / Misc]
-- **Points:** [Points]
+- **Name:** Smol
+- **Difficulty:** Medium
+- **Category:** Web / Privilege Escalation / Password Cracking
 - **Description:**  
-  [Copy or summarize the challenge prompt here]
+  At the heart of Smol is a WordPress website, a common target due to its extensive plugin ecosystem. The machine showcases a publicly known vulnerable plugin, highlighting the risks of neglecting software updates and security patches. Enhancing the learning experience, Smol introduces a backdoored plugin, emphasizing the significance of meticulous code inspection before integrating third-party components.
 
 ---
 
@@ -43,6 +43,7 @@ I probed the WordPress login page and identified a discrepancy in the authentica
   <img src="./assets/4.png" style="width: 31%; max-height: 250px;" />
   <img src="./assets/7.png" style="width: 31%; max-height: 250px;" />
 </div>
+<br/>
 
 I used **_WPScan_** to identify the `jsmol2wp` plugin.
 
@@ -205,14 +206,14 @@ I used the LFI vulnerability to inspect the source code, where I discovered a su
 I generated a Base64-encoded payload to bypass character filtering and executed it through the cmd parameter by piping the decoded string into bash. After catching the connection with a netcat listener, I stabilized the shell using a Python PTY spawn to gain a fully interactive terminal. This allowed me to move beyond the limited web shell and operate directly on the system as www-data.
 
 <div align="center">
-    <img src="./assets/18.png" style="max-height: 100px;" />
-    <img src="./assets/19.png" style="max-height: 100px;" />
+    <img src="./assets/18.png" style="max-height: 200px;" />
+    <img src="./assets/19.png" style="max-height: 200px;" />
 </div>
 
 I used the database password found earlier to log into **MySQL** and stole the password hashes for all the site users. I used **_`Hashcat`_** to crack the passwords, I discovered that **diego**'s real password was `sandiegocalifornia`. I then used the `su` command to switch from the web user to the **diego** user, gaining more access to the system.
 
 <div align="center">
-    <img src="./assets/20.png" style="max-height: 80px;" />
+    <img src="./assets/20.png" style="max-height: 100px;" />
     <img src="./assets/22.png" style="max-height: 100px;" />
     <img src="./assets/23.png" style="max-height: 100px;" />
 </div>
@@ -220,15 +221,15 @@ I used the database password found earlier to log into **MySQL** and stole the p
 Inside diego's home folder i found the `user.txt` file.
 
 <div align="center">
-    <img src="./assets/24.png" style="max-height: 80px;" />
+    <img src="./assets/24.png" style="max-height: 100px;" />
 </div>
 
 I found that the user think left his private SSH key (id_rsa) readable by other users, which is a major security flaw. I copied this key to my machine and used it to log in as him without needing a password. I am now successfully logged in as think, moving one step closer to full control.
 
 <div align="center">
-    <img src="./assets/25.png" style="max-height: 80px; display: block;" />
+    <img src="./assets/25.png" style="max-height: 100px; display: block;" />
     <img src="./assets/26.png" style="max-height: 350; display: block;;" />
-    <img src="./assets/27.png" style="max-height: 80px; display: block;" />
+    <img src="./assets/27.png" style="max-height: 100px; display: block;" />
 </div>
 
 I discovered a pre-existing flaw in the **PAM** (Pluggable Authentication Modules) system, which handles how users log in. The file `/etc/pam.d/su` contained a rule that specifically allowed the user think to switch to gege without a password. In Linux, marking a rule as 'sufficient' means that if the condition is met (in this case, being the user think), the system decides that's "enough" proof and skips the password check entirely.
@@ -236,7 +237,7 @@ I discovered a pre-existing flaw in the **PAM** (Pluggable Authentication Module
 <div align="center">
     <img src="./assets/28.png" style="max-height: 250px; display: block;" />
     <br/>
-    <img src="./assets/29.png" style="max-height: 200px; display: block;" />
+    <img src="./assets/29.png" style="max-height: 250px; display: block;" />
     <br/>
 </div>
 
@@ -265,5 +266,3 @@ I used the password found in the backup file to log in as **xavi**. To see what 
     <img src="./assets/38.png" style="max-height: 250px; display: block;" />
     <br/>
 </div>
-
-## 5. Exploit / Solution Code
