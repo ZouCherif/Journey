@@ -1,6 +1,6 @@
 # CTF Write-Up: Smol
 
-## 1. Challenge Overview
+## Challenge Overview
 
 - **Name:** Advent of Cyber '23 Side Quest
 - **Difficulty:** Hard
@@ -8,7 +8,7 @@
 - **Description:**  
    https://tryhackme.com/room/adventofcyber23sidequest
 
-## 2. Task 1 (The return of Yeti)
+## 1. Task 1 (The return of Yeti)
 
 ### SQ1. The return of Yeti
 
